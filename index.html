@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentient Quiz</title>
+  <style>
+    :root {
+      --skyblue: #00bfff;
+      --orange: #ff914d;
+      --lightgreen: #a8e6a3;
+      --white: #ffffff;
+      --text: #222;
+      --brand: #ff6f9c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to bottom, var(--skyblue) 0%, var(--orange) 40%, var(--lightgreen) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      background: var(--skyblue);
+      padding: 15px;
+      text-align: center;
+      color: white;
+      font-weight: 600;
+      font-size: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .about {
+      background: var(--white);
+      padding: 15px;
+      border-radius: 12px;
+      margin: 15px;
+      width: 90%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .quiz {
+      background: var(--white);
+      padding: 15px;
+      border-radius: 12px;
+      margin: 15px;
+      width: 90%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .question {
+      margin-bottom: 15px;
+    }
+
+    .question p {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .options label {
+      display: block;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #fafafa;
+      transition: 0.2s;
+    }
+
+    .options label:hover {
+      background: #f0f8ff;
+    }
+
+    .options input {
+      margin-right: 8px;
+    }
+
+    button {
+      background: var(--brand);
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+      text-align: center;
+      color: var(--text);
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 12px;
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
+      color: white;
+      background: var(--skyblue);
+    }
+  </style>
+</head>
+<body>
+  <header>🌊 Sentient Labs — Open Source AI</header>
+
+  <div class="about">
+    <h3>About Sentient</h3>
+    <p>Sentient Labs builds intelligent machines that can perceive, learn, and act in complex environments. 
+       Their work focuses on AI, robotics, and autonomous systems — making life safer and smarter.</p>
+  </div>
+
+  <div class="quiz">
+    <h3>Sentient Quiz</h3>
+    <form id="quizForm">
+      <!-- Questions will be injected here -->
+      <div id="questionsContainer"></div>
+
+      <button type="button" onclick="submitQuiz()">Submit</button>
+      <div class="result" id="result"></div>
+    </form>
+  </div>
+
+  <footer>
+    Created by James William | X: @Gmsniper6 | Discord: @jackcm_wsw3
+  </footer>
+
+  <script>
+    const quizData = [
+      { q: "What are three core areas Sentient Labs focuses on?", options: ["Cooking, Music, Sports","Perception, Decision-Making, Control","Painting, Singing, Writing","Marketing, Sales, Finance"], correct: 1 },
+      { q: "What does “autonomous system” mean?", options: ["A system that works without human control","A system that only works when plugged into electricity","A system that needs constant human commands","A system made only for entertainment"], correct: 0 },
+      { q: "Why is perception important for intelligent machines?", options: ["It helps them see and understand their environment","It makes machines dance","It reduces electricity cost","It helps humans talk to machines in slang"], correct: 0 },
+      { q: "Name one real-world field where Sentient’s technology might be applied.", options: ["Autonomous Vehicles","Cooking recipes","Playing cricket","Singing concerts"], correct: 0 },
+      { q: "What is the difference between automation and autonomy?", options: ["Automation follows set rules, autonomy makes decisions","Both are exactly the same","Autonomy means automatic TV remote","Automation is only for cars"], correct: 0 },
+      { q: "How does machine learning help robots adapt?", options: ["By learning from data and improving performance","By charging their batteries","By making robots dance","By changing robot colors"], correct: 0 },
+      { q: "What is the role of decision-making in AI systems?", options: ["To choose the best action in a situation","To fix mobile phones","To sing songs","To make robots look shiny"], correct: 0 },
+      { q: "What does “control” mean in robotics?", options: ["Managing and guiding robot actions","Controlling a TV with remote","Playing video games","Talking to robots like friends"], correct: 0 },
+      { q: "What is one challenge for autonomous systems in complex environments?", options: ["Handling unpredictable situations","Watching movies","Eating food","Playing football"], correct: 0 },
+      { q: "How might Sentient’s work impact human life in the future?", options: ["By making life safer and easier","By replacing cricket players","By making people sing better","By giving free chocolates"], correct: 0 }
+    ];
+
+    const container = document.getElementById("questionsContainer");
+    quizData.forEach((item, idx) => {
+      let qDiv = document.createElement("div");
+      qDiv.className = "question";
+      let qText = document.createElement("p");
+      qText.textContent = `${idx + 1}. ${item.q}`;
+      qDiv.appendChild(qText);
+
+      let opts = document.createElement("div");
+      opts.className = "options";
+
+      item.options.forEach((opt, i) => {
+        let label = document.createElement("label");
+        let input = document.createElement("input");
+        input.type = "radio";
+        input.name = `q${idx}`;
+        input.value = i;
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt));
+        opts.appendChild(label);
+      });
+
+      qDiv.appendChild(opts);
+      container.appendChild(qDiv);
+    });
+
+    function submitQuiz() {
+      let score = 0;
+      quizData.forEach((q, idx) => {
+        let selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        if (selected && parseInt(selected.value) === q.correct) {
+          score += 10;
+        }
+      });
+      document.getElementById("result").innerText = 
+        `Your Score: ${score} / ${quizData.length * 10}`;
+    }
+  </script>
+</body>
+</html>
